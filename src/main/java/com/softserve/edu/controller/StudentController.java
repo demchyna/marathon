@@ -61,15 +61,19 @@ public class StudentController {
     @GetMapping("/students/{marathon_id}/edit/{student_id}")
     public String updateStudent(@PathVariable("marathon_id") long marathonId, @PathVariable("student_id") long studentId, Model model) {
         User user = studentService.getUserById(studentId);
+        List<Role> roles = roleService.getAll();
         model.addAttribute("user", user);
+        model.addAttribute("roles", roles);
         return "update-student";
     }
 
     @PostMapping("/students/{marathon_id}/edit/{student_id}")
-    public String updateStudent(@PathVariable("marathon_id") long marathonId, @PathVariable("student_id") long studentId, @Validated @ModelAttribute User user, BindingResult result) {
+    public String updateStudent(@PathVariable("marathon_id") long marathonId, @PathVariable("student_id") long studentId,
+                                @RequestParam("role_id") long roleId, @Validated @ModelAttribute User user, BindingResult result) {
         if (result.hasErrors()) {
             return "update-marathon";
         }
+        user.setRole(roleService.getRoleById(roleId));
         studentService.createOrUpdateUser(user);
         return "redirect:/students/" + marathonId;
     }
@@ -92,15 +96,19 @@ public class StudentController {
     @GetMapping("/students/edit/{id}")
     public String updateStudent(@PathVariable long id, Model model) {
         User user = studentService.getUserById(id);
+        List<Role> roles = roleService.getAll();
         model.addAttribute("user", user);
+        model.addAttribute("roles", roles);
         return "update-student";
     }
 
     @PostMapping("/students/edit/{id}")
-    public String updateStudent(@PathVariable long id, @Validated @ModelAttribute User user, BindingResult result) {
+    public String updateStudent(@PathVariable long id, @RequestParam("role_id") long roleId,
+                                @Validated @ModelAttribute User user, BindingResult result) {
         if (result.hasErrors()) {
             return "update-marathon";
         }
+        user.setRole(roleService.getRoleById(roleId));
         studentService.createOrUpdateUser(user);
         return "redirect:/students";
     }

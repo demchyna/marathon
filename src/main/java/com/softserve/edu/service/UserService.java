@@ -10,7 +10,6 @@ import java.util.List;
 public interface UserService {
     List<User> getAll();
     User getUserById(Long id);
-    UserDetails loadUserByUsername(String username);
     User createOrUpdateUser( User user);
     void deleteUserById(Long id);
     boolean addUserToMarathon(User user, Marathon marathon);

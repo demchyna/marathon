@@ -66,11 +66,10 @@
                     <label for="role">Role:</label>
                 </td>
                 <td>
-                    <select th:field="*{role}" id="role">
-                        <option th:value="'MENTOR'" th:text="Mentor"></option>
-                        <option th:value="'TRAINEE'" th:text="Trainee"></option>
+                    <select name="role_id" id="role">
+                        <option>Select role...</option>
+                        <option th:each="role : ${roles}" th:value="${role.id}" th:text="${role.name}" />
                     </select>
-                </td>
             </tr>
             <tr>
                 <td colspan="2">

@@ -19,7 +19,7 @@ import java.util.List;
 
 @Service
 @Transactional
-public class UserServiceImpl implements UserService, UserDetailsService {
+public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final MarathonRepository marathonRepository;
@@ -61,14 +61,5 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         Marathon marathonEntity = marathonRepository.getOne(marathon.getId());
         marathonEntity.getUsers().remove(userEntity);
         return marathonRepository.save(marathonEntity) != null;
-    }
-
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.getUserByEmail(username);
-        if (user == null) {
-            throw new UsernameNotFoundException("User not Found!");
-        }
-        return user;
     }
 }
