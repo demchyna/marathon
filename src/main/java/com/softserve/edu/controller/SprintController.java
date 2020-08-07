@@ -1,10 +1,13 @@
 package com.softserve.edu.controller;
 
-import com.softserve.edu.model.Marathon;
 import com.softserve.edu.model.Sprint;
+import com.softserve.edu.model.User;
+import com.softserve.edu.security.WebAuthenticationToken;
 import com.softserve.edu.service.MarathonService;
 import com.softserve.edu.service.SprintService;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -25,12 +28,14 @@ public class SprintController {
         this.marathonService = marathonService;
     }
 
+    @PreAuthorize("hasRole('MENTOR')")
     @GetMapping("/create-sprint/{marathon_id}")
     public String createSprint(@PathVariable("marathon_id") long marathonId, Model model) {
         model.addAttribute("sprint", new Sprint());
         return "create-sprint";
     }
 
+    @PreAuthorize("hasRole('MENTOR')")
     @PostMapping("/create-sprint/{marathon_id}")
     public String createSprint(@Validated @ModelAttribute Sprint sprint, @PathVariable("marathon_id") long marathonId,
                                @RequestParam("start") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
@@ -46,11 +51,19 @@ public class SprintController {
         return "redirect:/sprints/" + marathonId;
     }
 
+    @PreAuthorize("hasRole('MENTOR') or hasRole('TRAINEE') and @sprintController.getMarathonIdByUser(#marathonId)")
     @GetMapping("/sprints/{marathon_id}")
-    public String getAllSprints(@PathVariable("marathon_id") long marathonId, Model model) {
+    public String getAllSprintsFromMarathon(@PathVariable("marathon_id") long marathonId, Model model) {
         List<Sprint> sprints = sprintService.getSprintsByMarathonId(marathonId);
         model.addAttribute("sprints", sprints);
         model.addAttribute("marathon_id", marathonId);
         return "sprints";
+    }
+
+    public boolean getMarathonIdByUser(long marathonId) {
+        WebAuthenticationToken authentication
+                = (WebAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) authentication.getDetails();
+        return user.getMarathons().stream().anyMatch(marathon -> marathon.getId() == marathonId);
     }
 }

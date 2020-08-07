@@ -32,7 +32,7 @@ public class User implements UserDetails {
 
     @Column(unique = true)
     @NotBlank
-    @Pattern(regexp=".+@.+\\..+", message = "Please provide a valid email address")
+    @Pattern(regexp = ".+@.+\\..+", message = "Please provide a valid email address")
     private String email;
 
     @ToString.Exclude
@@ -44,7 +44,7 @@ public class User implements UserDetails {
     private String password;
 
     @ToString.Exclude
-    @ManyToMany(mappedBy = "users")
+    @ManyToMany(mappedBy = "users", fetch = FetchType.EAGER)
     private List<Marathon> marathons;
 
     @OneToMany(mappedBy = "trainee")

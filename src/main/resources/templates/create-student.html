@@ -7,7 +7,7 @@
 <body>
     <div th:replace="header"></div>
     <h2>New Student Registration</h2>
-    <form th:action="@{/students/{marathon_id}/add(marathon_id = ${param.marathon_id})}" th:object="${user}" method="post">
+    <form th:action="@{/students/add}" th:object="${user}" method="post">
         <table>
             <tr>
                 <td>
@@ -74,6 +74,7 @@
                 </td>
             </tr>
         </table>
+        <input type="hidden" name="marathon_id" th:value="${param.marathon_id}">
     </form>
     <br>
     <a th:href="@{/marathons}">Go to Marathons page</a>

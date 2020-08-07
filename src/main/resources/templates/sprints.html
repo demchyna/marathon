@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      lang="en">
 <head>
     <meta charset="UTF-8">
     <title>List of Sprints</title>
@@ -7,10 +9,12 @@
 <body>
     <div th:replace="header"></div>
     <h2>List of Sprints</h2>
-    <form th:action="@{/create-sprint/{marathon_id}(marathon_id=${marathon_id})}" method="get">
-        <input type="submit" value="Create Sprint">
-    </form>
-    <br>
+    <div sec:authorize="hasRole('MENTOR')">
+        <form th:action="@{/create-sprint/{marathon_id}(marathon_id=${marathon_id})}" method="get">
+            <input type="submit" value="Create Sprint">
+        </form>
+        <br>
+    </div>
     <table border="1">
         <tr>
             <th>No.</th>
@@ -18,6 +22,10 @@
             <th>Title</th>
             <th>Start</th>
             <th>Finish</th>
+            <span sec:authorize="hasRole('MENTOR')">
+                <th colspan="2">Operations</th>
+            </span>
+
         </tr>
         <tr th:each="sprint, iStat: ${sprints}">
             <td th:text="${iStat.index + 1}" />
@@ -25,6 +33,15 @@
             <td th:text="${sprint.title}" />
             <td th:text="${sprint.startDate}" />
             <td th:text="${sprint.endDate}" />
+            <span sec:authorize="hasRole('MENTOR')">
+                <td >
+                    <a href="#">Edit</a>
+                </td>
+                <td>
+                    <a href="#">Delete</a>
+                </td>
+            </span>
+
         </tr>
     </table>
 </body>

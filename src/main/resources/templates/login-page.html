@@ -6,8 +6,7 @@
 </head>
 <body>
     <h2>LogIn Page</h2>
-    <div th:if="${param.error}">Invalid username and password.</div>
-    <div th:if="${param.logout}">You have been logged out.</div>
+    <p th:if="${param.error}">Username or password is not correct!</p>
     <form th:action="@{/login}" method="POST">
         <table>
             <tr>

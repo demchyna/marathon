@@ -7,7 +7,7 @@
 <body>
     <div th:replace="header"></div>
     <h2>Edit existing Student</h2>
-    <form th:object="${user}" method="post">
+    <form th:action="@{/students/edit/{student_id}(student_id = ${user.id})}" th:object="${user}" method="post">
         <table>
             <tr>
                 <td>
@@ -66,10 +66,13 @@
                     <label for="role">Role:</label>
                 </td>
                 <td>
-                    <select th:field="*{role}" id="role">
-                        <option th:value="'MENTOR'" th:text="Mentor"></option>
-                        <option th:value="'TRAINEE'" th:text="Trainee"></option>
+                    <select name="role_id" id="role">
+                        <option>Select role...</option>
+                        <option th:each="role : ${roles}" th:value="${role.id}" th:text="${role.name}" />
                     </select>
+                </td>
+                <td>
+                    <span th:if="${#fields.hasErrors('role')}" th:errors="*{role}"></span>
                 </td>
             </tr>
             <tr>
@@ -80,6 +83,7 @@
             </tr>
         </table>
         <input type="hidden" name="id" th:value="*{id}">
+        <input type="hidden" name="marathon_id" th:value="${marathon_id}">
     </form>
     <br>
     <a th:href="@{/marathons}">Go to Marathons page</a>

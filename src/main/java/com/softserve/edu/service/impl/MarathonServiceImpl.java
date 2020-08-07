@@ -4,6 +4,7 @@ import com.softserve.edu.exception.EntityNotFoundException;
 import com.softserve.edu.model.Marathon;
 import com.softserve.edu.repository.MarathonRepository;
 import com.softserve.edu.service.MarathonService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -28,7 +29,7 @@ public class MarathonServiceImpl implements MarathonService {
 
     public Marathon getMarathonById(Long id)  {
         return marathonRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(("No marathon /w id "+id)));// add to Logger later
-  }
+    }
 
     public Marathon createOrUpdate(Marathon marathon)  {
         if (marathon.getId() != null) {

@@ -7,6 +7,10 @@
 <body>
     <div th:replace="header"></div>
     <h2>List of Students</h2>
+    <form th:action="@{/create-student}" method="get">
+        <input type="submit" value="New User Registration">
+    </form>
+    <br>
     <table border="1">
         <tr>
             <th>No.</th>
@@ -14,6 +18,7 @@
             <th>First name</th>
             <th>Last name</th>
             <th>E-mail</th>
+            <th>Marathons</th>
             <th colspan="2">Operations</th>
         </tr>
         <tr th:each="student, iStat: ${students}">
@@ -22,6 +27,11 @@
             <td th:text="${student.firstName}" />
             <td th:text="${student.lastName}" />
             <td th:text="${student.email}" />
+            <td>
+                <ol style="margin: 0; padding-left: 20px">
+                    <li th:each="marathon: ${student.marathons}" th:text="${marathon.title}"></li>
+                </ol>
+            </td>
             <td >
                 <a th:href="@{|/students/edit/${student.id}|}">Edit</a>
             </td>

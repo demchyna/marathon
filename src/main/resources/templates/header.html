@@ -1,11 +1,14 @@
-<div xmlns:th="http://www.thymeleaf.org" >
+<div xmlns:th="http://www.thymeleaf.org"
+     xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
     <div>
         <a th:href="@{/}">Home Page</a> |
-        <a th:href="@{/marathons}">List of Marathons</a> |
-        <a th:href="@{/students}">List of Students</a>
+        <a th:href="@{/marathons}">List of Marathons</a>
+        <span sec:authorize="hasRole('MENTOR')">
+            | <a th:href="@{/students}">List of Students</a>
+        </span>
     </div>
-    <div>
-        <form th:action="@{/perform-logout}" method="post" style="position: absolute; top: 10px; right: 20px;">
+    <div sec:authorize="isAuthenticated()">
+        <form th:action="@{/logout}" method="post" style="position: absolute; top: 10px; right: 20px;">
             <input type="submit" value="LogOut">
         </form>
     </div>
