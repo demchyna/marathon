@@ -9,7 +9,7 @@
 <body>
     <div th:replace="header"></div>
     <h2>List of Marathons</h2>
-    <div sec:authorize="hasRole('MENTOR')">
+    <div sec:authorize="hasAuthority('MENTOR')">
         <form action="#" th:action="@{/create-marathon}" method="get">
             <input type="submit" value="Create Marathon">
         </form>
@@ -20,7 +20,7 @@
             <th>No.</th>
             <th>Id</th>
             <th>Title</th>
-            <span sec:authorize="hasRole('MENTOR')">
+            <span sec:authorize="hasAuthority('MENTOR')">
                 <th colspan="2">Operations</th>
                 <th>Sprints</th>
             </span>
@@ -31,7 +31,7 @@
             <td>
                 <a th:href="@{|/students/${marathon.id}|}" th:text="${marathon.title}" />
             </td>
-            <span sec:authorize="hasRole('MENTOR')">
+            <span sec:authorize="hasAuthority('MENTOR')">
                  <td>
                     <a th:href="@{|/marathons/edit/${marathon.id}|}">Edit</a>
                 </td>

@@ -1,36 +1,36 @@
 package com.softserve.edu.controller;
 
-        import com.softserve.edu.model.Marathon;
-        import com.softserve.edu.model.Role;
-        import com.softserve.edu.model.User;
-        import com.softserve.edu.service.MarathonService;
-        import com.softserve.edu.service.RoleService;
-        import com.softserve.edu.service.UserService;
-        import lombok.Data;
-        import org.springframework.beans.factory.annotation.Autowired;
-        import org.springframework.beans.factory.annotation.Qualifier;
-        import org.springframework.context.annotation.Lazy;
-        import org.springframework.security.access.prepost.PreAuthorize;
-        import org.springframework.security.crypto.password.PasswordEncoder;
-        import org.springframework.stereotype.Controller;
-        import org.springframework.ui.Model;
-        import org.springframework.validation.BindingResult;
-        import org.springframework.validation.annotation.Validated;
-        import org.springframework.web.bind.annotation.*;
+import com.softserve.edu.model.Marathon;
+import com.softserve.edu.model.Role;
+import com.softserve.edu.model.User;
+import com.softserve.edu.service.MarathonService;
+import com.softserve.edu.service.RoleService;
+import com.softserve.edu.service.UserService;
+import lombok.Data;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
-        import java.util.List;
+import java.util.List;
 
 @Controller
 @Data
-public class StudentController {
+public class UserController {
 
-    private UserService studentService;
+    private UserService userService;
     private RoleService roleService;
     private MarathonService marathonService;
     private PasswordEncoder passwordEncoder;
 
-    public StudentController(UserService studentService, RoleService roleService, MarathonService marathonService) {
-        this.studentService = studentService;
+    public UserController(UserService userService, RoleService roleService, MarathonService marathonService) {
+        this.userService = userService;
         this.roleService = roleService;
         this.marathonService = marathonService;
     }
@@ -41,7 +41,7 @@ public class StudentController {
         this.passwordEncoder = passwordEncoder;
     }
 
-    @PreAuthorize("hasRole('MENTOR')")
+    @PreAuthorize("hasAuthority('MENTOR')")
     @GetMapping("/create-student")
     public String createStudent(Model model) {
         List<Role> roles = roleService.getAll();
@@ -50,7 +50,7 @@ public class StudentController {
         return "create-student";
     }
 
-    @PreAuthorize("hasRole('MENTOR')")
+    @PreAuthorize("hasAuthority('MENTOR')")
     @PostMapping("students/add")
     public String createStudent(@RequestParam(value = "marathon_id", required = false, defaultValue = "0") long marathonId, @RequestParam("role_id") long roleId,
                                 @Validated @ModelAttribute User user, BindingResult result) {
@@ -60,29 +60,29 @@ public class StudentController {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRole(roleService.getRoleById(roleId));
         if (marathonId != 0) {
-            studentService.addUserToMarathon(
-                    studentService.createOrUpdateUser(user),
+            userService.addUserToMarathon(
+                    userService.createOrUpdateUser(user),
                     marathonService.getMarathonById(marathonId));
             return "redirect:/students/" + marathonId;
         }
-        studentService.createOrUpdateUser(user);
+        userService.createOrUpdateUser(user);
         return "redirect:/students";
     }
 
-    @PreAuthorize("hasRole('MENTOR')")
+    @PreAuthorize("hasAuthority('MENTOR')")
     @GetMapping("students/{marathon_id}/add")
     public String createStudent(@RequestParam("user_id") long userId, @PathVariable("marathon_id") long marathonId) {
-        studentService.addUserToMarathon(
-                studentService.getUserById(userId),
+        userService.addUserToMarathon(
+                userService.getUserById(userId),
                 marathonService.getMarathonById(marathonId));
         return "redirect:/students/" + marathonId;
     }
 
-    @PreAuthorize("hasRole('MENTOR')")
+    @PreAuthorize("hasAuthority('MENTOR')")
     @GetMapping("/students/{marathon_id}/edit/{student_id}")
     public String updateStudent(@PathVariable("marathon_id") long marathonId, @PathVariable("student_id") long studentId,
                                 Model model) {
-        User user = studentService.getUserById(studentId);
+        User user = userService.getUserById(studentId);
         List<Role> roles = roleService.getAll();
         model.addAttribute("user", user);
         model.addAttribute("roles", roles);
@@ -90,7 +90,7 @@ public class StudentController {
         return "update-student";
     }
 
-    @PreAuthorize("hasRole('MENTOR')")
+    @PreAuthorize("hasAuthority('MENTOR')")
     @PostMapping("/students/edit/{id}")
     public String updateStudent(@PathVariable long id, @RequestParam("role_id") long roleId,
                                 @RequestParam(value = "marathon_id", required = false, defaultValue = "0") long marathonId,
@@ -100,48 +100,56 @@ public class StudentController {
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRole(roleService.getRoleById(roleId));
-        studentService.createOrUpdateUser(user);
+        userService.createOrUpdateUser(user);
         if (marathonId != 0) {
             return "redirect:/students/" + marathonId;
         }
         return "redirect:/students";
     }
 
-    @PreAuthorize("hasRole('MENTOR')")
+    @PreAuthorize("hasAuthority('MENTOR')")
     @GetMapping("/students/{marathon_id}/delete/{student_id}")
     public String deleteStudent(@PathVariable("marathon_id") long marathonId, @PathVariable("student_id") long studentId) {
-        studentService.deleteUserFromMarathon(
-                studentService.getUserById(studentId),
+        userService.deleteUserFromMarathon(
+                userService.getUserById(studentId),
                 marathonService.getMarathonById(marathonId));
         return "redirect:/students/" + marathonId;
     }
 
-    @PreAuthorize("hasRole('MENTOR')")
+    @PreAuthorize("hasAuthority('MENTOR')")
     @GetMapping("/students")
     public String getAllStudents(Model model) {
-        List<User> students = studentService.getAll();
+        List<User> students = userService.getAll();
         model.addAttribute("students", students);
         return "students";
     }
 
-    @PreAuthorize("hasRole('MENTOR')")
+    @PreAuthorize("hasAuthority('MENTOR')")
     @GetMapping("/students/edit/{id}")
     public String updateStudent(@PathVariable long id, Model model) {
-        User user = studentService.getUserById(id);
+        User user = userService.getUserById(id);
         List<Role> roles = roleService.getAll();
         model.addAttribute("user", user);
         model.addAttribute("roles", roles);
         return "update-student";
     }
 
-    @PreAuthorize("hasRole('MENTOR')")
+    @PreAuthorize("hasAuthority('MENTOR')")
     @GetMapping("/students/delete/{id}")
     public String deleteStudent(@PathVariable long id) {
-        User student = studentService.getUserById(id);
+        User student = userService.getUserById(id);
         for (Marathon marathon : student.getMarathons()) {
-            studentService.deleteUserFromMarathon(student, marathon);
+            userService.deleteUserFromMarathon(student, marathon);
         }
-        studentService.deleteUserById(id);
+        userService.deleteUserById(id);
         return "redirect:/students";
     }
+
+    @GetMapping("/user/{id}")
+    public String showUser(@PathVariable("id") long id, Model model) {
+        User user = userService.getUserById(id);
+        model.addAttribute("user", user);
+        return "user-info";
+    }
+
 }

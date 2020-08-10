@@ -35,14 +35,14 @@ public class MarathonController {
         this.studentService = studentService;
     }
 
-    @PreAuthorize("hasRole('MENTOR')")
+    @PreAuthorize("hasAuthority('MENTOR')")
     @GetMapping("/create-marathon")
     public String createMarathon(Model model) {
         model.addAttribute("marathon", new Marathon());
         return "create-marathon";
     }
 
-    @PreAuthorize("hasRole('MENTOR')")
+    @PreAuthorize("hasAuthority('MENTOR')")
     @PostMapping("/marathons")
     public String createMarathon(@Validated @ModelAttribute Marathon marathon, BindingResult result) {
         if (result.hasErrors()) {
@@ -52,7 +52,7 @@ public class MarathonController {
         return "redirect:/marathons";
     }
 
-    @PreAuthorize("hasRole('MENTOR')")
+    @PreAuthorize("hasAuthority('MENTOR')")
     @GetMapping("/marathons/edit/{id}")
     public String updateMarathon(@PathVariable long id, Model model) {
         Marathon marathon = marathonService.getMarathonById(id);
@@ -60,7 +60,7 @@ public class MarathonController {
         return "update-marathon";
     }
 
-    @PreAuthorize("hasRole('MENTOR')")
+    @PreAuthorize("hasAuthority('MENTOR')")
     @PostMapping("/marathons/edit/{id}")
     public String updateMarathon(@PathVariable long id, @ModelAttribute Marathon marathon, BindingResult result) {
         if (result.hasErrors()) {
@@ -70,7 +70,7 @@ public class MarathonController {
         return "redirect:/marathons";
     }
 
-    @PreAuthorize("hasRole('MENTOR')")
+    @PreAuthorize("hasAuthority('MENTOR')")
     @GetMapping("/marathons/delete/{id}")
     public String deleteMarathon(@PathVariable long id) {
         marathonService.deleteMarathonById(id);
@@ -83,7 +83,7 @@ public class MarathonController {
         WebAuthenticationToken authentication
                 = (WebAuthenticationToken)SecurityContextHolder.getContext().getAuthentication();
         if (authentication.getAuthorities().stream()
-                .anyMatch(authority -> authority.getAuthority().equals("ROLE_TRAINEE"))) {
+                .anyMatch(authority -> authority.getAuthority().equals("TRAINEE"))) {
             return "redirect:/sprints/" + marathonId;
         }
         List<User> students = studentService.getAll().stream().filter(
@@ -103,7 +103,7 @@ public class MarathonController {
         WebAuthenticationToken authentication
                 = (WebAuthenticationToken)SecurityContextHolder.getContext().getAuthentication();
         if (authentication.getAuthorities().stream()
-                .anyMatch(authority -> authority.getAuthority().equals("ROLE_MENTOR"))) {
+                .anyMatch(authority -> authority.getAuthority().equals("MENTOR"))) {
             marathons = marathonService.getAll();
         } else {
             User user = (User)authentication.getDetails();

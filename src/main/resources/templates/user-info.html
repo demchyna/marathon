@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Info about User</title>
+</head>
+<body>
+    <div th:replace="header"></div>
+    <h2>Info about User</h2>
+    <table border="">
+        <tr>
+            <td>Id: </td>
+            <td th:text="${user.id}"></td>
+        </tr>
+        <tr>
+            <td>First name:</td>
+            <td th:text="${user.firstName}"></td>
+        </tr>
+        <tr>
+            <td>Last name</td>
+            <td th:text="${user.lastName}"></td>
+        </tr>
+        <tr>
+            <td>E-mail:</td>
+            <td th:text="${user.email}"></td>
+        </tr>
+        <tr>
+            <td>Role: </td>
+            <td th:text="${user.role.name}"></td>
+        </tr>
+        <tr>
+            <td>Marathons</td>
+            <td>
+                <ol style="margin: 0; padding-left: 20px">
+                    <li th:each="marathon: ${user.marathons}" th:text="${marathon.title}"></li>
+                </ol>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

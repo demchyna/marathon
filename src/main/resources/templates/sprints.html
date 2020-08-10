@@ -9,7 +9,7 @@
 <body>
     <div th:replace="header"></div>
     <h2>List of Sprints</h2>
-    <div sec:authorize="hasRole('MENTOR')">
+    <div sec:authorize="hasAuthority('MENTOR')">
         <form th:action="@{/create-sprint/{marathon_id}(marathon_id=${marathon_id})}" method="get">
             <input type="submit" value="Create Sprint">
         </form>
@@ -22,7 +22,7 @@
             <th>Title</th>
             <th>Start</th>
             <th>Finish</th>
-            <span sec:authorize="hasRole('MENTOR')">
+            <span sec:authorize="hasAuthority('MENTOR')">
                 <th colspan="2">Operations</th>
             </span>
 
@@ -33,7 +33,7 @@
             <td th:text="${sprint.title}" />
             <td th:text="${sprint.startDate}" />
             <td th:text="${sprint.endDate}" />
-            <span sec:authorize="hasRole('MENTOR')">
+            <span sec:authorize="hasAuthority('MENTOR')">
                 <td >
                     <a href="#">Edit</a>
                 </td>
